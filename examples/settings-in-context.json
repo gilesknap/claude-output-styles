@@ -1,0 +1,10 @@
+{
+  "model": "opus",
+  "theme": "dark",
+  "outputStyle": "Plain technical",
+  "permissions": {
+    "defaultMode": "auto",
+    "allow": []
+  },
+  "env": {}
+}

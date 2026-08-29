@@ -39,9 +39,22 @@ you want a style you can edit and version.
 
 ## Install
 
-Clone anywhere, then copy the style you want to one of two places.
+Clone the repo, then either run the script or do the two steps by hand.
 
-For every project you work on:
+### With the script
+
+```bash
+./examples/install.sh                              # Plain technical, for every project
+./examples/install.sh "Plain technical (strict)"   # the strict style instead
+./examples/install.sh "Plain technical" project    # into ./.claude for one repository
+```
+
+It copies the style, merges `outputStyle` into the right settings file with `jq`, and
+backs that file up first. It never overwrites settings you already have. It needs `jq`.
+
+### By hand
+
+Copy the style you want to one of two places. For every project you work on:
 
 ```bash
 mkdir -p ~/.claude/output-styles
@@ -55,17 +68,23 @@ mkdir -p .claude/output-styles
 cp output-styles/plain-technical.md .claude/output-styles/
 ```
 
-Then select it and start a new session:
+Then select it, either from the menu:
 
 ```
 /config   ->  Output style  ->  Plain technical
 /clear
 ```
 
-The style is part of the system prompt, which Claude Code reads once at session start.
-A change takes effect after `/clear` or in the next session.
+or by adding one field to a settings file. Examples are in [`examples/`](examples/):
 
-To set it without the menu, put the style's name in a settings file:
+| File | Copy into | Example |
+|---|---|---|
+| user settings | `~/.claude/settings.json` | [`examples/user-settings.json`](examples/user-settings.json) |
+| project settings | `.claude/settings.local.json` | [`examples/project-settings.local.json`](examples/project-settings.local.json) |
+| a fuller file, for context | either | [`examples/settings-in-context.json`](examples/settings-in-context.json) |
+
+`settings.json` is a single JSON object, so **merge the field, do not replace the file**.
+If you already have settings, add one line:
 
 ```json
 {
@@ -73,8 +92,21 @@ To set it without the menu, put the style's name in a settings file:
 }
 ```
 
+Or merge it from the shell, safely:
+
+```bash
+jq '. + {outputStyle: "Plain technical"}' ~/.claude/settings.json > /tmp/s.json \
+  && mv /tmp/s.json ~/.claude/settings.json
+```
+
+The style name comes from the `name:` field in the style's frontmatter, not the file
+name. Use `Plain technical` or `Plain technical (strict)`, spelled exactly.
+
 `~/.claude/settings.json` applies everywhere. `.claude/settings.local.json` applies to one
 project and is the file the `/config` menu writes.
+
+The style is part of the system prompt, which Claude Code reads once at session start.
+A change takes effect after `/clear` or in the next session.
 
 ## What it costs
 
