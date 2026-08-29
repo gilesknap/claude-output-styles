@@ -46,6 +46,31 @@ comment and rewrites each one in whichever style you have active.
 That installs the skill, changes no style, and touches no settings file. Menu option 5 does
 the same.
 
+### How to ask for it
+
+The skill loads on demand. Name it, and say what you want done.
+
+```text
+Rewrite the docstrings and comments in src/thoth to match my current output style.
+Use the skill, and work on the restyle-docstrings branch.
+```
+
+Three clauses, each doing one job.
+
+- **`src/thoth`** sets the scope. Name a directory rather than a whole repository. The
+  skill rewrites ten files at a time.
+- **"my current output style"** sets the voice. The skill adds no writing rules of its own,
+  so the active style decides every question about the prose.
+- **"the restyle-docstrings branch"** gives the checks a clean base. Every check compares
+  against a git ref, so commit or stash before you start.
+
+The skill asks you one question before the first file: the docstring mood. Most codebases
+open in the third person, as in `"""Farms a single media download."""`. A style that
+mandates imperatives rewrites that to `"""Farm a single media download."""`, in every file.
+
+That is a convention change rather than a voice change, so the skill puts it to you. Add
+"use the style's defaults for mood" to answer in advance.
+
 The skill adds no writing rules. It trusts the style, exactly as you trust it for new code.
 It carries the two things a style cannot: what a rewrite risks, and a check that it did no
 harm.
