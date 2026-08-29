@@ -3,22 +3,22 @@
 #
 # Run it with no arguments and it asks you what you want:
 #
-#   ./examples/install.sh
+#   ./install.sh
 #
 # Or name a style loosely, if you already know: concise, plain, strict, default
 #
-#   ./examples/install.sh concise
-#   ./examples/install.sh strict project
+#   ./install.sh concise
+#   ./install.sh strict project
 #
 # Or install the rewrite skill on its own, changing no style:
 #
-#   ./examples/install.sh skill
+#   ./install.sh skill
 #
 # It merges one field into your settings file and backs that file up first.
 # It never replaces settings you already have. It needs jq.
 set -euo pipefail
 
-REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 command -v jq >/dev/null || { echo "jq is required. Install it and run this again." >&2; exit 1; }
 

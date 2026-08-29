@@ -9,7 +9,7 @@ This README follows the strict style, as a sample of what it does to prose.
 ```bash
 git clone https://github.com/gilesknap/claude-output-styles.git
 cd claude-output-styles
-./examples/install.sh
+./install.sh
 ```
 
 The script asks which style you want and where to apply it. Press Enter twice for the
@@ -40,7 +40,7 @@ The `apply-style-to-existing` skill covers the backfill. It reads every docstrin
 comment and rewrites each one in whichever style you have active.
 
 ```bash
-./examples/install.sh skill
+./install.sh skill
 ```
 
 That installs the skill, changes no style, and touches no settings file. Menu option 5 does
