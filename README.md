@@ -98,6 +98,10 @@ that helps is one term per concept, not simpler terms.
 Brevity must not remove evidence. Both styles quote error output, stack traces, security
 findings and destructive-action effects in full.
 
+Brevity must not remove a contract either. Both styles forbid the removal of a docstring,
+an `Args:`, `Returns:` or `Raises:` section, or documentation coverage, to meet a length
+rule.
+
 ## On ASD-STE100
 
 [ASD-STE100 Simplified Technical English](https://www.asd-ste100.org/) is a controlled

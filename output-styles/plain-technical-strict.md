@@ -68,3 +68,8 @@ Quote in full, whatever the rules above say:
 - security findings and their reproduction steps
 - the exact effect of a destructive action, before you take it
 - anything the reader must copy verbatim, such as a command or a key
+- reference documentation: a docstring, a doc comment, or an `Args:`, `Returns:` or
+  `Raises:` section
+
+Brevity applies to the narrative, never to the contract. Do not drop a docstring, a
+section, or documentation coverage to satisfy a length rule. Shorten the prose instead.
