@@ -7,8 +7,8 @@ This README follows the strict style, as a sample of what it does to prose.
 ## Quickstart
 
 ```bash
-git clone https://github.com/gilesknap/claude-ouptut-styles.git
-cd claude-ouptut-styles
+git clone https://github.com/gilesknap/claude-output-styles.git
+cd claude-output-styles
 ./examples/install.sh
 ```
 
