@@ -32,62 +32,44 @@ To set the field yourself instead, copy a fragment from [`examples/`](examples/)
 
 Option 4 in the script removes the setting and returns you to stock Claude Code.
 
-## Apply a style to an existing codebase
+## Measured effect
 
-A style shapes what Claude writes from now on. It does nothing to code you already have.
+Measured on 2026-08-29, with Claude Code 2.1.251 on Claude Opus 5.
 
-The `apply-style-to-existing` skill covers the backfill. It reads every docstring and
-comment and rewrites each one in whichever style you have active.
+Twelve prompts against one repository at a fixed commit: three factual lookups, three
+explanations, three judgement calls and three small tasks that use tools. Two runs per
+prompt per arm, so 72 replies. The metric and the bar were fixed before the run: median
+words per reply, and the strict style had to cut 15% against no style, and 5% more than
+its sibling.
 
-```bash
-./install.sh skill
-```
+| Arm | Median words | Median sentence | Change |
+|---|---|---|---|
+| No style | 238 | 16 words | — |
+| Plain technical | 182 | 12 words | -19% |
+| Plain technical (strict) | 143 | 10 words | -27% |
 
-That installs the skill, changes no style, and touches no settings file. Menu option 5 does
-the same.
+The change column is the median of twelve per-prompt ratios, which is the honest
+comparison: a lookup and an explanation differ in length far more than the arms do.
+Both bars are cleared. The strict style cuts a further 20% against its sibling.
 
-### How to ask for it
+Correctness held. A separate grading session, which never saw which arm wrote which
+reply, marked 18, 19 and 19 of 20 replies correct for the three arms. Judgement prompts
+gained most under the strict style, at -45%. Lookups and small tasks gained least, at
+about -18%.
 
-The skill loads on demand. Name it, and say what you want done.
+**The gain is density, not a removed preamble.** The control arm already led with the
+answer: zero preamble words at the median, and no reply in any arm restated the question.
+Claude Code's own system prompt handles that much. What the styles remove is the second
+explanation of a point already made, and the alternatives nobody asked for.
 
-```text
-Rewrite the docstrings and comments in src/thoth to match my current output style.
-Use the skill, and work on the restyle-docstrings branch.
-```
+Read the numbers narrowly. One repository, one CLAUDE.md, 72 replies. Two of the twelve
+prompts asked for a file edit and are excluded from the correctness counts, because the
+harness reset the working tree between runs and the grader could not see the edits.
 
-Three clauses, each doing one job.
-
-- **`src/thoth`** sets the scope. Name a directory rather than a whole repository. The
-  skill rewrites ten files at a time.
-- **"my current output style"** sets the voice. The skill adds no writing rules of its own,
-  so the active style decides every question about the prose.
-- **"the restyle-docstrings branch"** gives the checks a clean base. Every check compares
-  against a git ref, so commit or stash before you start.
-
-The skill asks you one question before the first file: the docstring mood. Most codebases
-open in the third person, as in `"""Farms a single media download."""`. A style that
-mandates imperatives rewrites that to `"""Farm a single media download."""`, in every file.
-
-That is a convention change rather than a voice change, so the skill puts it to you. Add
-"use the style's defaults for mood" to answer in advance.
-
-The skill adds no writing rules. It trusts the style, exactly as you trust it for new code.
-It carries the things a style cannot: what a rewrite risks, and a check for each risk.
-
-A rewrite risks three things that new writing does not.
-
-It can change code, and `codesame.py` settles that by comparing ASTs with docstrings
-stripped. It can lose a fact the code does not carry, such as why a constant holds its
-value, and `keptfacts.py` lists those. It can end up longer than what it replaced, and
-`sizecheck.py` counts the words on both sides.
-
-That third one is the surprise. New writing under a plain style is short because there is
-no dense original in front of you. A rewrite has one, and unpacking a dash-jointed
-sentence into two clean ones costs words every time. A style's limits are per sentence,
-so splitting a 40-word sentence into two 20-word ones passes every rule and still grows
-the file. Nothing inside a style notices.
-
-All three run on every batch. None has an opinion about style, so none asks you anything.
+A rewrite of prose that already exists is a different task, and gains nothing. Rewriting
+749 docstrings in one codebase under the strict style moved the word count by -0.7%.
+A dense original costs words to unpack, and a per-sentence limit is content to split one
+long sentence into two.
 
 ## Why two kinds of rule
 
@@ -99,8 +81,9 @@ repeats the body, and three options when you asked for one.
 **Sentence bloat** is long sentences, passive voice, noun stacks, and nouns built from
 verbs.
 
-Most complaints are the first kind. Sentence limits alone do not fix it, so both styles
-lead with structure.
+Both styles lead with structure, because discourse bloat is the louder complaint. The
+measurement above says the sentence rules earn their place too: the strict style differs
+from its sibling mostly in those rules, and it cuts a further 20%.
 
 ## What it costs
 
