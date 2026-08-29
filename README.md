@@ -37,23 +37,25 @@ Option 4 in the script removes the setting and returns you to stock Claude Code.
 A style shapes what Claude writes from now on. It does nothing to code you already have.
 
 The `apply-style-to-existing` skill covers the backfill. It reads every docstring and
-comment, rewrites each one in whichever style you have active, and verifies that nothing
-broke.
+comment and rewrites each one in whichever style you have active.
 
 ```bash
 ./examples/install.sh skill
 ```
 
-That installs the skill and changes no style and no setting. Menu option 5 does the same.
+That installs the skill, changes no style, and touches no settings file. Menu option 5 does
+the same.
 
-The skill carries five Python scripts, in two groups. The verifiers hold for any style:
-`codesame.py` compares ASTs with docstrings stripped, so a docs-only rewrite is proved
-rather than asserted; `keptfacts.py` lists every fact a rewrite dropped; `setdoc.py`
-replaces a docstring by AST position. The formatters carry opinions, so check them against
-your project first: `longblocks.py` needs `--limit` set from your own style, and
-`degoogle.py` assumes Google-style sections at 88 columns.
+The skill adds no writing rules. It trusts the style, exactly as you trust it for new code.
+It carries the two things a style cannot: what a rewrite risks, and a check that it did no
+harm.
 
-Rewrite in batches of ten files and run the verifiers after each batch.
+A rewrite risks two things that new writing does not. It can change code, and
+`codesame.py` settles that by comparing ASTs with docstrings stripped. It can lose a fact
+the code does not carry, such as why a constant holds its value, and `keptfacts.py` lists
+those for you to read.
+
+Only `codesame.py` is required.
 
 ## Why two kinds of rule
 
