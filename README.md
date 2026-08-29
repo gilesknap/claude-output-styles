@@ -173,20 +173,25 @@ output STE-conformant.
 
 ### What the strict style adds
 
-Three rules in the strict style are not in Part 1. They are there because Part 1 alone
+Four rules in the strict style are not in Part 1. They are there because Part 1 alone
 did not make a rewrite shorter.
 
-The measurement is six files of `gilesknap/thoth`, 1,399 words of docstrings and
-comments, rewritten against their own originals. The strict style as first written cut
-5.5%. It shortened every sentence, from a mean of 20.4 words to 15.0, and then wrote 60
-sentences where the original had 47. Every word the length rule squeezed out came back
-as sentence count, because every limit in Part 1 is per sentence and nothing counts them.
+The measurement is `gilesknap/thoth`: six leaf modules of 1,399 words for the rule
+iteration, then 22 files of 9,425 words for the settled result, docstrings and comments,
+rewritten against their own originals. The strict style as first written cut 5.5%. It
+shortened every sentence, from a mean of 20.4 words to 15.0, and then wrote 60 sentences
+where the original had 47. Every word the length rule squeezed out came back as sentence
+count, because every limit in Part 1 is per sentence and nothing counts them.
+
+Words are sentences times length. Three of the four rules below exist to stop the count
+rising while the length falls.
 
 | Added rule | Why it is there |
 |---|---|
 | Aim for 15 words a sentence. | Part 1 gives ceilings of 20 and 25 words and no target, so a rewrite writes up to the ceiling. Adding the target took the cut from 8.5% to 12.0%, at a mean of 13.2 words. |
 | Recast a dash or semicolon join with a comma, a colon or a subordinate clause. Reach for a new sentence last. | Part 1 bans the join and does not say what replaces it. A full stop became the default, and two short sentences are usually longer than the one they replace. This took the sentence count back to 48 and the cut from 5.5% to 8.5%. |
 | Do not add a sentence whose only job is to explain the sentence before it. | Part 1 is a sentence-level standard, so nothing in it forbids the elaborating sentence. `plain-technical.md` already carried this rule and the strict style had lost it. |
+| Do not finish with more sentences than you started with. Shorten a long sentence by removing words, not by cutting it in two. | The recast rule and the 15-word target pull against each other: hitting 15 words makes the full stop the easy way out. Without this rule every batch still came out about 25% more sentences than it started with, and gave the length win straight back. |
 
 Writing below a ceiling is still conformant, so the 15-word target adds no conflict.
 
@@ -195,10 +200,27 @@ subordinate clause keeps two things in one sentence. This style reads that rule 
 forbidding a second *idea*, not a qualifier. That is a judgement call, and it is the one
 place the strict style takes a liberty with the standard.
 
-Two limits on the measurement. It is one codebase, six files, docstrings and comments
-only, so the percentages will move on other prose. And a fourth rule was tried and
-dropped: capping a paragraph at one or two sentences changed nothing, because the
-observed mean was already 1.9.
+### What the rules do not buy
+
+Across the 22 files the four rules cut 6.7%, holding every docstring, every `Args:` entry
+and 157 of 160 Sphinx cross-reference roles. The same files rewritten in a free personal
+register cut 17.5%, and the difference is mostly not writing quality. That rewrite keeps
+53 of the 160 roles, and it reaches its figure partly by deleting things the code does not
+carry: a parsing regex and its literal example, a table's DDL, three constant names, two
+of four named call sites.
+
+So the reduction is uneven, and it is worth knowing where it lives. Prose that repeats
+itself compresses hard: the six leaf modules came in at 17.0%, past the free rewrite's
+16.3% on the same files while keeping all 28 of their roles against its 16. Dense
+reference prose that states each fact once has almost nothing to give, and holding
+"Never drop these" puts its honest floor near 5%. A style cannot make a docstring shorter
+than its content.
+
+Three limits on the measurement. It is one codebase, docstrings and comments only, so the
+percentages will move on other prose. The comparison rewrite is one person's register,
+not a control. And two further rules were tried and dropped: capping a paragraph at one
+or two sentences changed nothing, because the observed mean was already 1.9, and
+re-wrapping paragraphs to fill the column budget gained one line in 169.
 
 This project has no affiliation with ASD or the STE Maintenance Group.
 

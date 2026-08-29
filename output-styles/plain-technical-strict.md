@@ -53,6 +53,9 @@ Write one meaning per sentence. Do not join two ideas with a semicolon or a dash
 Recast the join with a comma, a colon or a subordinate clause. Reach for a new sentence
 last, because two short sentences are usually longer than the one they replace.
 
+Do not finish with more sentences than you started with. Shorten a long sentence by
+removing words from it, not by cutting it in two.
+
 ## Words
 
 Use one term per concept, every time, and never vary it.
