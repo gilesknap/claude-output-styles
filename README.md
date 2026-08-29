@@ -28,7 +28,7 @@ To set the field yourself instead, copy a fragment from [`examples/`](examples/)
 |---|---|---|
 | Concise | Built into Claude Code | Leads with the result. Skips preamble and narration. Try this first. |
 | Plain technical | This repo | Active voice, shorter sentences, one term per concept, a filler cut-list. |
-| Plain technical (strict) | This repo | The mechanical limits of ASD-STE100: 20-word procedural sentences, imperatives, no -ing forms, no contractions. |
+| Plain technical (strict) | This repo | The mechanical limits of ASD-STE100: 20-word procedural sentences, imperatives, no -ing forms, no contractions. Plus [three additions](#what-the-strict-style-adds). |
 
 Option 4 in the script removes the setting and returns you to stock Claude Code.
 
@@ -167,8 +167,38 @@ language for technical documentation. ASD of Brussels owns it. Issue 9 dates fro
 
 The specification has two parts: Part 1, the writing rules, and Part 2, the dictionary.
 
-**The strict style implements Part 1 rules only.** Part 2 is copyright ASD, so this repo
-ships no dictionary and checks no vocabulary. Do not call the output STE-conformant.
+**The strict style implements Part 1 writing rules, plus three of its own.** Part 2 is
+copyright ASD, so this repo ships no dictionary and checks no vocabulary. Do not call the
+output STE-conformant.
+
+### What the strict style adds
+
+Three rules in the strict style are not in Part 1. They are there because Part 1 alone
+did not make a rewrite shorter.
+
+The measurement is six files of `gilesknap/thoth`, 1,399 words of docstrings and
+comments, rewritten against their own originals. The strict style as first written cut
+5.5%. It shortened every sentence, from a mean of 20.4 words to 15.0, and then wrote 60
+sentences where the original had 47. Every word the length rule squeezed out came back
+as sentence count, because every limit in Part 1 is per sentence and nothing counts them.
+
+| Added rule | Why it is there |
+|---|---|
+| Aim for 15 words a sentence. | Part 1 gives ceilings of 20 and 25 words and no target, so a rewrite writes up to the ceiling. Adding the target took the cut from 8.5% to 12.0%, at a mean of 13.2 words. |
+| Recast a dash or semicolon join with a comma, a colon or a subordinate clause. Reach for a new sentence last. | Part 1 bans the join and does not say what replaces it. A full stop became the default, and two short sentences are usually longer than the one they replace. This took the sentence count back to 48 and the cut from 5.5% to 8.5%. |
+| Do not add a sentence whose only job is to explain the sentence before it. | Part 1 is a sentence-level standard, so nothing in it forbids the elaborating sentence. `plain-technical.md` already carried this rule and the strict style had lost it. |
+
+Writing below a ceiling is still conformant, so the 15-word target adds no conflict.
+
+The recast rule does pull against Part 1's "one meaning per sentence", because a
+subordinate clause keeps two things in one sentence. This style reads that rule as
+forbidding a second *idea*, not a qualifier. That is a judgement call, and it is the one
+place the strict style takes a liberty with the standard.
+
+Two limits on the measurement. It is one codebase, six files, docstrings and comments
+only, so the percentages will move on other prose. And a fourth rule was tried and
+dropped: capping a paragraph at one or two sentences changed nothing, because the
+observed mean was already 1.9.
 
 This project has no affiliation with ASD or the STE Maintenance Group.
 
