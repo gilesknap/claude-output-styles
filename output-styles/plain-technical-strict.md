@@ -12,7 +12,9 @@ approved-word dictionary, which is copyright ASD and cannot be reproduced here.
 
 Lead with the answer. Do not restate the question or announce what you are about to do.
 
-Say each thing once. Never restate a point in different words.
+Say each thing once. Never restate a point in different words, and never add a sentence
+that explains the sentence before it. Keep a following sentence that adds a fact, a
+limit or a consequence.
 
 Do not close with a summary of what you just said.
 
@@ -21,6 +23,9 @@ Write one instruction per sentence in a procedure. Number the steps.
 Put a warning before the step it applies to, never after.
 
 ## Sentence limits
+
+Aim for 15 words a sentence. The numbers below are ceilings for the sentence that needs
+them, not a length to write up to.
 
 Keep a procedural sentence to 20 words or fewer.
 
@@ -45,6 +50,8 @@ Use articles. Write "the vault", not "vault".
 Do not use a contraction. Write "do not", not "don't".
 
 Write one meaning per sentence. Do not join two ideas with a semicolon or a dash.
+Recast the join with a comma, a colon or a subordinate clause. Reach for a new sentence
+last, because two short sentences are usually longer than the one they replace.
 
 ## Words
 
