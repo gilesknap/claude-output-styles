@@ -1,8 +1,9 @@
 <!--
 Paste this into ~/.claude/CLAUDE.md (every project) or a project CLAUDE.md.
 
-Why: an output style does not reach subagents, but CLAUDE.md does. Subagents load
-every level of the CLAUDE.md hierarchy, so these rules follow delegated work too.
+Why: an output style never reaches a subagent. A CLAUDE.md rule reaches most of them,
+so it narrows the gap. It does not close the gap. A subagent still runs its own system
+prompt, and it will sound different from your main conversation.
 
 Keep it short. CLAUDE.md loads into every subagent, so you pay for it each time a
 subagent starts. This is the core of the style, not the whole of it.
