@@ -44,13 +44,38 @@ Clone the repo, then either run the script or do the two steps by hand.
 ### With the script
 
 ```bash
-./examples/install.sh                              # Plain technical, for every project
-./examples/install.sh "Plain technical (strict)"   # the strict style instead
-./examples/install.sh "Plain technical" project    # into ./.claude for one repository
+./examples/install.sh
 ```
 
-It copies the style, merges `outputStyle` into the right settings file with `jq`, and
-backs that file up first. It never overwrites settings you already have. It needs `jq`.
+It asks which style you want and where to apply it. Both questions default to the first
+answer, so two presses of Enter turns on the built-in Concise style everywhere.
+
+```
+Which output style do you want?
+
+  1) Concise                   Built into Claude Code. Nothing is installed.
+  2) Plain technical           This repo.
+  3) Plain technical (strict)  This repo. Adds the ASD-STE100 limits.
+  4) Default                   Turn any style off.
+
+Enter 1-4 [1]:
+```
+
+Option 4 removes the `outputStyle` field, which is how you go back to stock Claude Code.
+
+If you already know what you want, name it loosely and skip the menu:
+
+```bash
+./examples/install.sh concise
+./examples/install.sh strict project
+```
+
+It accepts `concise`, `plain`, `strict` or `default`, in any case, and an optional
+`user` or `project` after it.
+
+The script copies the style file if one is needed, merges `outputStyle` into the right
+settings file with `jq`, and backs that file up first. It never replaces settings you
+already have. It needs `jq`.
 
 ### By hand
 
