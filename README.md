@@ -53,9 +53,9 @@ harm.
 A rewrite risks two things that new writing does not. It can change code, and
 `codesame.py` settles that by comparing ASTs with docstrings stripped. It can lose a fact
 the code does not carry, such as why a constant holds its value, and `keptfacts.py` lists
-those for you to read.
+those.
 
-Only `codesame.py` is required.
+Both run on every batch. Neither has an opinion about style, so neither asks you anything.
 
 ## Why two kinds of rule
 

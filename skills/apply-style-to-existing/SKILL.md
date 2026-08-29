@@ -67,16 +67,12 @@ Ten files at a time. A hundred-file pass that fails at the end is worse than ten
 1. Read the whole file before you change any of it.
 2. Rewrite in the active style.
 3. Run `codesame.py <ref> <files>`. It must exit 0.
-4. Run the test suite.
+4. Run `keptfacts.py <ref> <files>` and read the rows. Put back anything the surrounding
+   code does not already say.
+5. Run the test suite.
 
-That is the whole required loop.
-
-When every batch is done, offer `keptfacts.py` in one sentence and let the user decide.
-Something like: "keptfacts.py lists facts the old docstrings carried that the new ones do
-not, such as a symbol or an exception type. Want me to run it over the 89 files?"
-
-Offer it once, at the end. Do not run it unasked, do not offer it per batch, and do not
-raise it again if the answer is no.
+That is the whole loop. Run both scripts every batch, and do not ask the user first.
+Neither has an opinion about style, so neither is a decision.
 
 ## The scripts
 
@@ -85,12 +81,12 @@ Three, all Python 3 and standard library only. None needs the project installed.
 | Script | Status | What it does |
 |---|---|---|
 | `codesame.py <ref> <path>...` | **Required** | Strips docstrings from both sides and compares ASTs, so a docs-only rewrite is proved rather than asserted. Exits non-zero on any code change. No style opinion at all. |
-| `keptfacts.py <ref> [path]...` | On request | Pairs each docstring with its old self by qualname and lists facts the rewrite dropped: a parameter, a symbol, a constant, an exception type, an issue reference, a Sphinx role. Also flags the escape byte. |
+| `keptfacts.py <ref> [path]...` | **Required** | Pairs each docstring with its old self by qualname and lists facts the rewrite dropped: a parameter, a symbol, a constant, an exception type, an issue reference, a Sphinx role. Also flags the escape byte. |
 | `setdoc.py <path> <qualname>` | As needed | Replaces one docstring with stdin, addressed by AST position, so an edit cannot land on the wrong copy of a repeated line. Takes `<module>` for the module docstring. A safer edit, not a check. |
 
-`keptfacts.py` runs only when the user asks for it, after you have offered it at the end
-of the pass. It is a filtered diff, not a verdict: its exit code gates nothing, and a
-non-zero exit means look rather than fail.
+`keptfacts.py` is a filtered diff, not a verdict. Its exit code gates nothing, and a
+non-zero exit means look rather than fail. Read it and act on it; do not treat a clean run
+as the goal.
 
 A rewrite that dropped nothing has cut nothing, so read the rows and put back only what the
 surrounding code does not already say. Two of its checks assume comments open with a
