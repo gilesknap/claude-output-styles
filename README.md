@@ -32,6 +32,29 @@ To set the field yourself instead, copy a fragment from [`examples/`](examples/)
 
 Option 4 in the script removes the setting and returns you to stock Claude Code.
 
+## Apply a style to an existing codebase
+
+A style shapes what Claude writes from now on. It does nothing to code you already have.
+
+The `apply-style-to-existing` skill covers the backfill. It reads every docstring and
+comment, rewrites each one in whichever style you have active, and verifies that nothing
+broke.
+
+```bash
+./examples/install.sh skill
+```
+
+That installs the skill and changes no style and no setting. Menu option 5 does the same.
+
+The skill carries five Python scripts, in two groups. The verifiers hold for any style:
+`codesame.py` compares ASTs with docstrings stripped, so a docs-only rewrite is proved
+rather than asserted; `keptfacts.py` lists every fact a rewrite dropped; `setdoc.py`
+replaces a docstring by AST position. The formatters carry opinions, so check them against
+your project first: `longblocks.py` needs `--limit` set from your own style, and
+`degoogle.py` assumes Google-style sections at 88 columns.
+
+Rewrite in batches of ten files and run the verifiers after each batch.
+
 ## Why two kinds of rule
 
 "Too wordy" is two faults. Each needs a different rule.

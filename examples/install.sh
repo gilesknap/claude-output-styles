@@ -10,6 +10,10 @@
 #   ./examples/install.sh concise
 #   ./examples/install.sh strict project
 #
+# Or install the rewrite skill on its own, changing no style:
+#
+#   ./examples/install.sh skill
+#
 # It merges one field into your settings file and backs that file up first.
 # It never replaces settings you already have. It needs jq.
 set -euo pipefail
@@ -25,6 +29,7 @@ FILE=""
 
 set_style() {
   case "$1" in
+    skill)    STYLE="__SKILL__"                  ; FILE="" ;;
     concise)  STYLE="Concise"                    ; FILE="" ;;
     plain)    STYLE="Plain technical"            ; FILE="plain-technical.md" ;;
     strict)   STYLE="Plain technical (strict)"   ; FILE="plain-technical-strict.md" ;;
@@ -41,8 +46,10 @@ if [ "${1:-}" != "" ]; then
     plain|plain-technical|normal|standard)   set_style plain ;;
     strict|plain-technical-strict|ste)       set_style strict ;;
     default|none|off|revert)                 set_style default ;;
+    skill|rewrite|apply)                     set_style skill ;;
     *) echo "Do not recognise \"$1\"." >&2
-       echo "Use: concise, plain, strict or default. Or run with no arguments to choose." >&2
+       echo "Use: concise, plain, strict, default or skill." >&2
+       echo "Or run with no arguments to choose." >&2
        exit 2 ;;
   esac
 fi
@@ -50,7 +57,7 @@ fi
 if [ -z "$STYLE" ]; then
   if [ ! -t 0 ]; then
     echo "Nothing to do: no style named and no terminal to ask on." >&2
-    echo "Use: $0 [concise|plain|strict|default] [user|project]" >&2
+    echo "Use: $0 [concise|plain|strict|default|skill] [user|project]" >&2
     exit 2
   fi
   cat <<'MENU'
@@ -71,16 +78,21 @@ Which output style do you want?
 
   4) Default                   Turn any style off and go back to stock Claude Code.
 
+  5) Rewrite skill only        Install apply-style-to-existing, which rewrites the
+                               docstrings and comments of an existing codebase to match
+                               whichever style you have active. Changes no style.
+
 MENU
   while :; do
-    read -r -p "Enter 1-4 [1]: " CHOICE
+    read -r -p "Enter 1-5 [1]: " CHOICE
     CHOICE="${CHOICE:-1}"
     case "$CHOICE" in
       1) set_style concise; break ;;
       2) set_style plain;   break ;;
       3) set_style strict;  break ;;
       4) set_style default; break ;;
-      *) echo "Enter a number from 1 to 4." ;;
+      5) set_style skill;   break ;;
+      *) echo "Enter a number from 1 to 5." ;;
     esac
   done
 fi
@@ -122,6 +134,19 @@ esac
 
 echo
 mkdir -p "$DIR"
+
+if [ "$STYLE" = "__SKILL__" ]; then
+  SRC="$REPO/skills/apply-style-to-existing"
+  [ -d "$SRC" ] || { echo "Skill not found: $SRC" >&2; exit 1; }
+  mkdir -p "$DIR/skills"
+  rm -rf "$DIR/skills/apply-style-to-existing"
+  cp -r "$SRC" "$DIR/skills/"
+  echo "Installed apply-style-to-existing to $DIR/skills/"
+  echo
+  echo "It loads on demand. No style changed, and no settings file touched."
+  echo "Ask for it by name, or say \"rewrite the docstrings in your current style\"."
+  exit 0
+fi
 
 if [ -n "$FILE" ]; then
   SRC="$REPO/output-styles/$FILE"
