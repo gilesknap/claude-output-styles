@@ -18,7 +18,7 @@ rewritten one.
 
 ## What a rewrite risks that new writing does not
 
-Two things, and only two.
+Three things, and only three. Each has a script.
 
 **It can change code.** An edit to a docstring can land on the wrong line, or a triple
 quote can swallow a statement. `codesame.py` settles this, and running it is not
@@ -29,7 +29,40 @@ code in front of you, so there is nothing to lose. An old one may hold what the 
 not: why a constant is 60, an issue reference, a wire-format quirk, the reason a
 workaround exists. Rewrite over that and it leaves the repository.
 
+**It can end up longer than what it replaced.** New writing under a plain style is short
+because there is no dense original in front of you. A rewrite has one, and unpacking it
+costs words. `sizecheck.py` is the only thing in the loop that notices.
+
 Everything else about the rewrite is the style's business.
+
+## Why a rewrite inflates
+
+Read this before the first file. It is the failure you are most likely to ship.
+
+A plain style's grammar rules are expansive. One meaning per sentence, name the actor,
+do not join two ideas with a dash or a semicolon, no `-ing` where a simple tense works:
+every one of those *adds* words to prose that packed three ideas into one dash-jointed
+sentence. Its brevity rules are the counterweight, and they are easy to skip because
+they are not mechanical.
+
+Worse, a style's numeric limits are almost always **per sentence**. Splitting one 40-word
+sentence into two 20-word ones satisfies every measurable rule while making the text
+longer. Nothing inside a style measures a whole docstring, so the grammar half runs away
+unchecked.
+
+Three specific ways it happens:
+
+- **Reading a "do not shorten reference documentation" rule as "do not cut anything".**
+  Such a rule is a floor on the *contract*, the `Args:`/`Returns:`/`Raises:` sections and
+  the facts. It is not a ban on cutting restatement.
+- **Inventing a subject to kill a passive.** "Returns the parsed page" becomes "The
+  function returns the parsed page". Two or three words a sentence, no information. Use
+  the imperative the docstring convention already gives you.
+- **Promoting every parenthetical to its own sentence.** A parenthetical is often the
+  cheapest correct form. The rule bans the *dash join*, not the aside.
+
+None of this means loosen the style. It means the brevity half is doing real work, so
+run both halves and then measure.
 
 ## Before you start
 
@@ -69,19 +102,25 @@ Ten files at a time. A hundred-file pass that fails at the end is worse than ten
 3. Run `codesame.py <ref> <files>`. It must exit 0.
 4. Run `keptfacts.py <ref> <files>` and read the rows. Put back anything the surrounding
    code does not already say.
-5. Run the test suite.
+5. Run `sizecheck.py <ref> <files>`. It must exit 0.
+6. Run the test suite.
 
-That is the whole loop. Run both scripts every batch, and do not ask the user first.
-Neither has an opinion about style, so neither is a decision.
+That is the whole loop. Run all three scripts every batch, and do not ask the user first.
+None has an opinion about style, so none is a decision.
+
+Run step 5 on the **first** batch before you write the second. That is the batch that
+tells you whether your reading of the style inflates, and it is cheap to correct across
+ten files and expensive across a hundred.
 
 ## The scripts
 
-Three, all Python 3 and standard library only. None needs the project installed.
+Four, all Python 3 and standard library only. None needs the project installed.
 
 | Script | Status | What it does |
 |---|---|---|
 | `codesame.py <ref> <path>...` | **Required** | Strips docstrings from both sides and compares ASTs, so a docs-only rewrite is proved rather than asserted. Exits non-zero on any code change. No style opinion at all. |
 | `keptfacts.py <ref> [path]...` | **Required** | Pairs each docstring with its old self by qualname and lists facts the rewrite dropped: a parameter, a symbol, a constant, an exception type, an issue reference, a Sphinx role. Also flags the escape byte. |
+| `sizecheck.py <ref> <path>...` | **Required** | Counts docstring and comment words on both sides, per file and in total. Exits non-zero when the total grew by more than 2%, or `--tolerance PCT`. |
 | `setdoc.py <path> <qualname>` | As needed | Replaces one docstring with stdin, addressed by AST position, so an edit cannot land on the wrong copy of a repeated line. Takes `<module>` for the module docstring. A safer edit, not a check. |
 
 `keptfacts.py` is a filtered diff, not a verdict. Its exit code gates nothing, and a
@@ -101,9 +140,19 @@ project's decision and it applies to new writing too. Note that `docformatter` c
 a summary's first word, adds a terminal full stop, and defaults to 72 and 79 columns rather
 than 88.
 
+`sizecheck.py` measures the batch, not the sentence, and it allows 2%. Never buy words
+back by cutting a fact or blurring a sentence: a clear line that costs three words beats
+a terse one that makes the reader open the code. In testing, chasing a hard zero on two
+files cost a `ts` symbol that `keptfacts.py` then had to catch.
+
+A growth row is not always wrong either. A style that demands a `Returns:` section a
+function never had makes that file grow, correctly. But a whole batch over the tolerance
+is a reading of the style, not a fact about the code, and it is the reading that has to
+change.
+
 ## Judging the result
 
-Count the lines, not only the words. A rewrite that cuts words but grows the diff has moved
-the verbosity rather than removed it.
+`sizecheck.py` counts the words. Count the **lines** yourself: a rewrite that cuts words
+but grows the diff has moved the verbosity rather than removed it.
 
 Then read three files as a reader. Every mechanical check can pass on prose that is worse.

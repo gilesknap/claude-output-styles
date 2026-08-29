@@ -68,8 +68,17 @@ Quote in full, whatever the rules above say:
 - security findings and their reproduction steps
 - the exact effect of a destructive action, before you take it
 - anything the reader must copy verbatim, such as a command or a key
-- reference documentation: a docstring, a doc comment, or an `Args:`, `Returns:` or
-  `Raises:` section
 
-Brevity applies to the narrative, never to the contract. Do not drop a docstring, a
-section, or documentation coverage to satisfy a length rule. Shorten the prose instead.
+## Never drop these
+
+Documentation is not quoted material. Every rule above applies to its prose. What a
+length rule must never remove is the documentation itself:
+
+- a docstring or doc comment on anything that has one
+- an `Args:`, `Returns:` or `Raises:` section, and every entry in it
+- a fact the code does not carry: why a constant holds its value, an issue or ADR
+  reference, a wire-format quirk, the reason a workaround exists
+
+Keep the section, tighten the sentence. An `Args:` entry gets the same 25-word limit,
+the same active voice and the same one meaning per sentence as any other line you write.
+The failure is lost coverage. A shorter, clearer entry is the goal.

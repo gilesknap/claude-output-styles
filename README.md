@@ -72,15 +72,22 @@ That is a convention change rather than a voice change, so the skill puts it to 
 "use the style's defaults for mood" to answer in advance.
 
 The skill adds no writing rules. It trusts the style, exactly as you trust it for new code.
-It carries the two things a style cannot: what a rewrite risks, and a check that it did no
-harm.
+It carries the things a style cannot: what a rewrite risks, and a check for each risk.
 
-A rewrite risks two things that new writing does not. It can change code, and
-`codesame.py` settles that by comparing ASTs with docstrings stripped. It can lose a fact
-the code does not carry, such as why a constant holds its value, and `keptfacts.py` lists
-those.
+A rewrite risks three things that new writing does not.
 
-Both run on every batch. Neither has an opinion about style, so neither asks you anything.
+It can change code, and `codesame.py` settles that by comparing ASTs with docstrings
+stripped. It can lose a fact the code does not carry, such as why a constant holds its
+value, and `keptfacts.py` lists those. It can end up longer than what it replaced, and
+`sizecheck.py` counts the words on both sides.
+
+That third one is the surprise. New writing under a plain style is short because there is
+no dense original in front of you. A rewrite has one, and unpacking a dash-jointed
+sentence into two clean ones costs words every time. A style's limits are per sentence,
+so splitting a 40-word sentence into two 20-word ones passes every rule and still grows
+the file. Nothing inside a style notices.
+
+All three run on every batch. None has an opinion about style, so none asks you anything.
 
 ## Why two kinds of rule
 
