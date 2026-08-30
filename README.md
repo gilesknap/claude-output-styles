@@ -28,66 +28,48 @@ To set the field yourself instead, copy a fragment from [`examples/`](examples/)
 |---|---|---|
 | Concise | Built into Claude Code | Leads with the result. Skips preamble and narration. Try this first. |
 | Plain technical | This repo | Active voice, shorter sentences, one term per concept, a filler cut-list. |
-| Plain technical (strict) | This repo | The mechanical limits of ASD-STE100: 20-word procedural sentences, imperatives, no -ing forms, no contractions. Plus [three additions](#what-the-strict-style-adds). |
+| Plain technical (strict) | This repo | The mechanical limits of ASD-STE100: 20-word procedural sentences, imperatives, no -ing forms, no contractions. Plus [four additions](#what-the-strict-style-adds). |
 
 Option 4 in the script removes the setting and returns you to stock Claude Code.
 
-## Apply a style to an existing codebase
+## Measured effect
 
-A style shapes what Claude writes from now on. It does nothing to code you already have.
+Measured on 2026-08-30, with Claude Code 2.1.251 on Claude Opus 5.
 
-The `apply-style-to-existing` skill covers the backfill. It reads every docstring and
-comment and rewrites each one in whichever style you have active.
+Twelve prompts against one repository at a fixed commit: three factual lookups, three
+explanations, three judgement calls and three small tasks that use tools. Two runs per
+prompt per arm, so 96 replies. The metric and the bar were fixed before the run: median
+words per reply, and the strict style had to cut 15% against no style, and 5% more than
+its sibling.
 
-```bash
-./install.sh skill
-```
+| Arm | Median words | Median sentence | vs no style | vs Concise |
+|---|---|---|---|---|
+| No style | 238 | 16 words | — | +22% |
+| Concise (built in) | 168 | 15 words | -18% | — |
+| Plain technical | 182 | 12 words | -19% | +6% |
+| Plain technical (strict) | 143 | 10 words | -27% | **-17%** |
 
-That installs the skill, changes no style, and touches no settings file. Menu option 5 does
-the same.
+Each change column is the median of twelve per-prompt ratios, which is the honest
+comparison: a lookup and an explanation differ in length far more than the arms do.
 
-### How to ask for it
+**Try Concise first, and mean it.** The built-in style does most of the work for nothing.
+Plain technical matched it and did not beat it. Only the strict style pulled clear, by a
+further 17%, and that is the number to weigh against installing anything.
 
-The skill loads on demand. Name it, and say what you want done.
+Correctness held in every arm. A separate grading session, which never saw which arm
+wrote which reply, marked 18, 18, 19 and 19 of 20 replies correct, in table order.
+Judgement prompts gained most under the strict style, at -45%. Lookups and small tasks
+gained least, at about -18%.
 
-```text
-Rewrite the docstrings and comments in src/thoth to match my current output style.
-Use the skill, and work on the restyle-docstrings branch.
-```
+**The gain is density, not a removed preamble.** The no-style arm already led with the
+answer: zero preamble words at the median, and no reply in any arm restated the question.
+Claude Code's own system prompt handles that much. What a style removes is the second
+explanation of a point already made, and the alternatives nobody asked for.
 
-Three clauses, each doing one job.
-
-- **`src/thoth`** sets the scope. Name a directory rather than a whole repository. The
-  skill rewrites ten files at a time.
-- **"my current output style"** sets the voice. The skill adds no writing rules of its own,
-  so the active style decides every question about the prose.
-- **"the restyle-docstrings branch"** gives the checks a clean base. Every check compares
-  against a git ref, so commit or stash before you start.
-
-The skill asks you one question before the first file: the docstring mood. Most codebases
-open in the third person, as in `"""Farms a single media download."""`. A style that
-mandates imperatives rewrites that to `"""Farm a single media download."""`, in every file.
-
-That is a convention change rather than a voice change, so the skill puts it to you. Add
-"use the style's defaults for mood" to answer in advance.
-
-The skill adds no writing rules. It trusts the style, exactly as you trust it for new code.
-It carries the things a style cannot: what a rewrite risks, and a check for each risk.
-
-A rewrite risks three things that new writing does not.
-
-It can change code, and `codesame.py` settles that by comparing ASTs with docstrings
-stripped. It can lose a fact the code does not carry, such as why a constant holds its
-value, and `keptfacts.py` lists those. It can end up longer than what it replaced, and
-`sizecheck.py` counts the words on both sides.
-
-That third one is the surprise. New writing under a plain style is short because there is
-no dense original in front of you. A rewrite has one, and unpacking a dash-jointed
-sentence into two clean ones costs words every time. A style's limits are per sentence,
-so splitting a 40-word sentence into two 20-word ones passes every rule and still grows
-the file. Nothing inside a style notices.
-
-All three run on every batch. None has an opinion about style, so none asks you anything.
+Read the numbers narrowly. One repository, one CLAUDE.md, 96 replies, and a style shapes
+chat rather than files. Two of the twelve prompts asked for a file edit and are excluded
+from the correctness counts, because the harness reset the working tree between runs and
+the grader could not see the edits.
 
 ## Why two kinds of rule
 
@@ -99,8 +81,10 @@ repeats the body, and three options when you asked for one.
 **Sentence bloat** is long sentences, passive voice, noun stacks, and nouns built from
 verbs.
 
-Most complaints are the first kind. Sentence limits alone do not fix it, so both styles
-lead with structure.
+Both styles lead with structure, because discourse bloat is the louder complaint. But
+Concise already covers the structure rules, and the measurement above shows that a style
+which stops there buys nothing over it. The sentence rules are what the strict style adds
+and what its further 17% comes from.
 
 ## What it costs
 
@@ -167,31 +151,23 @@ language for technical documentation. ASD of Brussels owns it. Issue 9 dates fro
 
 The specification has two parts: Part 1, the writing rules, and Part 2, the dictionary.
 
-**The strict style implements Part 1 writing rules, plus three of its own.** Part 2 is
+**The strict style implements Part 1 writing rules, plus four of its own.** Part 2 is
 copyright ASD, so this repo ships no dictionary and checks no vocabulary. Do not call the
 output STE-conformant.
 
 ### What the strict style adds
 
-Four rules in the strict style are not in Part 1. They are there because Part 1 alone
-did not make a rewrite shorter.
+Four rules in the strict style are not in Part 1. Part 1 is a sentence-level standard,
+and every limit in it is per sentence. Nothing in it counts sentences. A style that only
+caps sentence length therefore buys its shorter sentences by writing more of them, and
+words are sentences times length.
 
-The measurement is `gilesknap/thoth`: six leaf modules of 1,399 words for the rule
-iteration, then 22 files of 9,425 words for the settled result, docstrings and comments,
-rewritten against their own originals. The strict style as first written cut 5.5%. It
-shortened every sentence, from a mean of 20.4 words to 15.0, and then wrote 60 sentences
-where the original had 47. Every word the length rule squeezed out came back as sentence
-count, because every limit in Part 1 is per sentence and nothing counts them.
-
-Words are sentences times length. Three of the four rules below exist to stop the count
-rising while the length falls.
-
-| Added rule | Why it is there |
+| Added rule | What it does |
 |---|---|
-| Aim for 15 words a sentence. | Part 1 gives ceilings of 20 and 25 words and no target, so a rewrite writes up to the ceiling. Adding the target took the cut from 8.5% to 12.0%, at a mean of 13.2 words. |
-| Recast a dash or semicolon join with a comma, a colon or a subordinate clause. Reach for a new sentence last. | Part 1 bans the join and does not say what replaces it. A full stop became the default, and two short sentences are usually longer than the one they replace. This took the sentence count back to 48 and the cut from 5.5% to 8.5%. |
-| Do not add a sentence whose only job is to explain the sentence before it. | Part 1 is a sentence-level standard, so nothing in it forbids the elaborating sentence. `plain-technical.md` already carried this rule and the strict style had lost it. |
-| Do not finish with more sentences than you started with. Shorten a long sentence by removing words, not by cutting it in two. | The recast rule and the 15-word target pull against each other: hitting 15 words makes the full stop the easy way out. Without this rule every batch still came out about 25% more sentences than it started with, and gave the length win straight back. |
+| Aim for 15 words a sentence. | Part 1 gives ceilings of 20 and 25 words and no target. A ceiling on its own is a licence to write up to it. |
+| Recast a dash or semicolon join with a comma, a colon or a subordinate clause. Reach for a new sentence last. | Part 1 bans the join and does not say what replaces it. Left alone, a full stop becomes the default, and two short sentences are usually longer than the one they replace. |
+| Do not add a sentence whose only job is to explain the sentence before it. | Part 1 does not forbid the elaborating sentence. `plain-technical.md` already carried this rule and the strict style had lost it. |
+| Do not finish with more sentences than you started with. Shorten a long sentence by removing words, not by cutting it in two. | The recast rule and the 15-word target pull against each other: hitting 15 words makes the full stop the easy way out. |
 
 Writing below a ceiling is still conformant, so the 15-word target adds no conflict.
 
@@ -200,27 +176,9 @@ subordinate clause keeps two things in one sentence. This style reads that rule 
 forbidding a second *idea*, not a qualifier. That is a judgement call, and it is the one
 place the strict style takes a liberty with the standard.
 
-### What the rules do not buy
-
-Across the 22 files the four rules cut 6.7%, holding every docstring, every `Args:` entry
-and 157 of 160 Sphinx cross-reference roles. The same files rewritten in a free personal
-register cut 17.5%, and the difference is mostly not writing quality. That rewrite keeps
-53 of the 160 roles, and it reaches its figure partly by deleting things the code does not
-carry: a parsing regex and its literal example, a table's DDL, three constant names, two
-of four named call sites.
-
-So the reduction is uneven, and it is worth knowing where it lives. Prose that repeats
-itself compresses hard: the six leaf modules came in at 17.0%, past the free rewrite's
-16.3% on the same files while keeping all 28 of their roles against its 16. Dense
-reference prose that states each fact once has almost nothing to give, and holding
-"Never drop these" puts its honest floor near 5%. A style cannot make a docstring shorter
-than its content.
-
-Three limits on the measurement. It is one codebase, docstrings and comments only, so the
-percentages will move on other prose. The comparison rewrite is one person's register,
-not a control. And two further rules were tried and dropped: capping a paragraph at one
-or two sentences changed nothing, because the observed mean was already 1.9, and
-re-wrapping paragraphs to fill the column budget gained one line in 169.
+These four rules are most of what separates the strict style from its sibling, and the
+measurement above is what they buy: a further 17% against Concise, where the sibling
+buys nothing.
 
 This project has no affiliation with ASD or the STE Maintenance Group.
 
